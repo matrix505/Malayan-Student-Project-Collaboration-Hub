@@ -7,7 +7,6 @@ namespace MVCWEB.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-
         private readonly AppDbContext _dbContext;
 
         public HomeController(ILogger<HomeController> logger, AppDbContext context)
@@ -18,16 +17,18 @@ namespace MVCWEB.Controllers
 
         public IActionResult Index()
         {
-            try
+
+            //try database if establishing connection
+           if(_dbContext.Database.CanConnect())
             {
-                _dbContext.SaveChanges();
-                _logger.LogInformation("GEGEGE");
+                _logger.LogInformation("Can connect bitch!");
             }
-            catch (Exception e)
+           else
             {
-                _logger.LogError(e, "Error saving database");
+                _logger.LogInformation("nah bitch!");
             }
-            return View();
+
+                return View();
         }
 
         public IActionResult Privacy()
