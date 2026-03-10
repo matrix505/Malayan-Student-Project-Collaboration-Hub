@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace MVCWEB.Models
+namespace MVCWEB.Data
 {
     public class AppDbContext : DbContext
     {
@@ -8,6 +8,6 @@ namespace MVCWEB.Models
         {
             // Nothing's here
         }
-        public virtual DbSet<ItemDto> Items { get; set; }
+       
     }
 }
