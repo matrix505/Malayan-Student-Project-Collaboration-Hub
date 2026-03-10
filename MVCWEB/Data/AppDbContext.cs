@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace MVCWEB.Models
+namespace MVCWEB.Data
 {
     public class AppDbContext : DbContext
     {
