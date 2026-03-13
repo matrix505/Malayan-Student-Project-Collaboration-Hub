@@ -10,9 +10,11 @@
     <link rel="stylesheet" href="~/MVCWEB.styles.css" asp-append-version="true" />
 </head>
 <body>
+    <div id="loader" class="loader-overlay">
+        <div class="spinner"></div>
+    </div>
 
-    <header>
-
+    <header class="content">
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm">
             <div class="container">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">MVCWEB</a>
@@ -27,13 +29,13 @@
         </nav>
     </header>
 
-    <div class="">
+    <div class="content">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="border-top footer text-muted content">
         <div class="container">
             &copy; 2026 - MVCWEB - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
@@ -43,5 +45,17 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
+    <script type="text/javascript">
+                        window.addEventListener("load", () => {
+          const loader = document.getElementById("loader");
+          const content = document.getElementById("content");
+
+          // Fade out loader
+          loader.classList.add("hidden");
+
+          // Fade in content after small delay
+          content.style.opacity = 1;
+        });
+    </script>
 </body>
 </html>
