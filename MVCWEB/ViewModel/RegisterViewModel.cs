@@ -4,22 +4,29 @@ namespace MVCWEB.ViewModel
 {
     public class RegisterViewModel
     {
-        [Required]
+        [Required(ErrorMessage = "First Name is Required")]
         public string? FirstName { get; set; }
-        [Required]
+
+        [Required(ErrorMessage = "Last Name is Required")]
         public string? LastName { get; set; }
-        [Required]
+
+        [Required(ErrorMessage = "Username is Required")]
+        [MinLength(8)]
+        [MaxLength(24)]
         public string? Username { get; set; }
-        [Required]
-        [EmailAddress]
+
+        [Required(ErrorMessage = "Email Address is Required")]
+        [EmailAddress(ErrorMessage = "Email Address is Invalid")] 
         public string? Email { get; set; }
-        [Required]
+        
+        [Required(ErrorMessage = "Password is Required")]
+        
         [DataType(DataType.Password)]
         public string? Password { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Confirm Password is Required")]
         [DataType(DataType.Password)]
         public string? ConfirmPassword {  get; set; }
-        [Required]
+        [Required(ErrorMessage = "Birthdate is Required")]
         public DateOnly Birthdate { get; set; }
         public string? Country { get; set; }
 
