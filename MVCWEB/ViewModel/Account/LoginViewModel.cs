@@ -1,13 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MVCWEB.ViewModel
+namespace MVCWEB.ViewModel.Account
 {
     public class LoginViewModel
     {
         [Required(ErrorMessage = "Username is Required")]
-        public string? Username { get; set; }
+        public string Username { get; set; }
         [Required(ErrorMessage = "Password is Required")]
-        public string? Password { get; set; }
+        [DataType(DataType.Password)]
+        public string Password { get; set; }
 
     }
 }

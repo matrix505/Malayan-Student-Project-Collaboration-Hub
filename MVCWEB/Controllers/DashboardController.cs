@@ -4,13 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 namespace MVCWEB.Controllers
 {
     [Authorize]
-    public class AccountController : Controller
+    public class DashboardController : Controller
     {
         public IActionResult Index()
-        {
-            return View();
-        }
-        public IActionResult Profile()
         {
             return View();
         }

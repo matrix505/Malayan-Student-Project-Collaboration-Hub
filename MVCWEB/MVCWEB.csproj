@@ -27,6 +27,15 @@
     <PackageReference Include="BCrypt.Net-Next" Version="4.1.0" />
     <PackageReference Include="Dapper" Version="2.1.72" />
     <PackageReference Include="Isopoh.Cryptography.Argon2" Version="2.0.0" />
+    <PackageReference Include="MailKit" Version="4.15.1" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.4" />  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Hub\" />
+    <Folder Include="Templates\" />
+    <Folder Include="Views\Collab\" />
+    <Folder Include="Views\NewFolder\" />
+    <Folder Include="Views\Project\" />
+  </ItemGroup>
 
 </Project>

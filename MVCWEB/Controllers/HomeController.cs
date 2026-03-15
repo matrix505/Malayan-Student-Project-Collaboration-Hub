@@ -22,6 +22,10 @@ namespace MVCWEB.Controllers
        
         public IActionResult Index()
         {
+            if(User.Identity!.IsAuthenticated)
+            {
+                return RedirectToAction("Index","Dashboard");
+            }
             return View();
         }
         public IActionResult About()

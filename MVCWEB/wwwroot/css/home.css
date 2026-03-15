@@ -35,11 +35,34 @@
 body {
     background-color:var(--background);
 }
+html, body {
+    height: 100%;
+    margin: 0;
+}
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+.wrapper {
+    display: flex;
+    flex-direction: column;
+}
+main {
+    flex-grow:1;
+}
 
+footer {
+/*    flex-shrink: 0;*/
+    height: 5px;
+}
 .navbar {
+    width: 100%;
+    height: 60px;
+    z-index: 1000;
     background-color: var(--structure);
-    padding:5px 0;
-    margin-bottom:0 !important;
+    padding: 5px 0;
+    margin-bottom: 0 !important;
 }
 .navbar .nav-item {
     padding :10px 10px;
@@ -106,7 +129,7 @@ body {
     top: 0;
     left: 0;
     width: 100vw;
-    height: 100vh;
+    height: 100%;
     background-color: #ffffff; 
     display: flex;
     justify-content: center;
@@ -136,3 +159,5 @@ body {
 .page-content {
     transition: opacity 0.5s ease;
 }
+
+
