@@ -1,5 +1,12 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+@using MVCWEB.ViewModel.Collab
+@model CollabViewModel
+@*
+
 *@
 @{
+}
+
+@await Html.PartialAsync("Partials/_ProjectListPartial",Model)
+@section PageStyles {
+    <link rel="stylesheet" src="~/css/Modals/ProjectDetails.css"/>
 }

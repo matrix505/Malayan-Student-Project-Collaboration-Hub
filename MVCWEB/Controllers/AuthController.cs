@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MVCWEB.DAL.Abstract;
-using MVCWEB.Models;
+using MVCWEB.Models.Entities;
 using MVCWEB.Services.Abstract;
 using MVCWEB.ViewModel.Account;
 using System.Security.Claims;
