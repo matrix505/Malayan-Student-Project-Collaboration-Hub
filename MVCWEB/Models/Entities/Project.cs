@@ -10,5 +10,11 @@
         public DateTime? CreatedAt { get; set; }
         public string? Status { get; set; }
 
+        public string? OwnerName { get; set; }
+        public int? TotalMembers {  get; set; }
+        public string? CategoryNames { get; set; } = string.Empty;
+        public string? MemberNames { get; set; } = string.Empty;
+        
+
     }
 }
