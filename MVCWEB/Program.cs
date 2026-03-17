@@ -1,11 +1,10 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
 using MVCWEB.Extensions.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add collection of services
 builder.Services.AddControllersWithViews();
-builder.Services.AddApplicationServices(); //custom from extensions
+builder.Services.AddApplicationServices(builder.Configuration); //custom from extensions
 builder.Services.AddRepositoryServices();  //custom from extensions
 
 var app = builder.Build();

@@ -1,12 +1,46 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using MVCWEB.ViewModel.Account
+@model RegisterViewModel
 @{
     ViewData["Title"] = "Login";
 }
-<div class="container">
-    <h1>Testing</h1>
-</div>
-@section Scripts  {
 
+<div class="auth-page">
+
+    <section class="section-left">
+        <div class="inner-section">
+            @await Html.PartialAsync("Partials/Auth/_LoginFormPartial",Model)
+        </div>
+    </section>
+
+    <section class="section-right">
+        <div class="slider">
+            <div class="slide">
+                <img class="slide-img " src="~/Assets/Images/collab-content1.png" alt="slide 1" />
+                <div class="slide-overlay"></div>
+                <h1 class="slide-text">Connect</h1>
+            </div>
+
+            <div class="slide">
+                <img class="slide-img" src="~/Assets/Images/collab-content2.png" alt="slide 2" />
+                <div class="slide-overlay"></div>
+                <h1 class="slide-text">Collaborate</h1>
+
+            </div>
+            <div class="slide">
+                <img class="slide-img" src="~/Assets/Images/collab-content3.png" alt="slide 3" />
+                <div class="slide-overlay"></div>
+                <h1 class="slide-text">Create</h1>
+
+            </div>
+        </div>
+    </section>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("Partials/_ValidationScriptsPartial");
+    }
+}
+@section PageStyles {
+    <link rel="stylesheet" href="~/css/Pages/LoginStyle.css" type="text/css" />
 }
