@@ -2,6 +2,7 @@
 
 
 .sidebar {
+    padding-top:var(--topnav-height);
     width: 250px;
     height: 100vh;
     background-color: #1f1f2e;
@@ -107,7 +108,7 @@
     margin: 0 auto;
 }
 
-@media screen and (max-width: 768px) {
+/*@media screen and (max-width: 768px) {
     .sidebar {
         left: -250px;
     }
@@ -115,7 +116,7 @@
         .sidebar.active {
             left: 0;
         }
-}
+}*/
 
 
 .user-information-container {

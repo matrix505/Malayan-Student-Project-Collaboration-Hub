@@ -41,34 +41,9 @@
         max-width: 336px;
     }
 
-    /* .avatar-sm {
-        width: 30px;
-        height: 30px;
-        font-size: 12px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: bold;
-        flex-shrink: 0;
-    }
-
-    .member-row {
-        padding: .5rem;
-        border-radius: .375rem;
-        background: #f8f9fa;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-
-    .member-email {
-        font-size: 11px;
-    } */
 </style>
 
-<div class="container browse-container">
+<div class="container-fluid container-md browse-container">
 
 
     <div class="d-flex align-items-center justify-content-between mb-4">
@@ -103,7 +78,7 @@
 
     @if (Model.Projects.Items.Any())
     {
-        <div class="container row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 g-3 mb-4">
+        <div class="container-fluid container-md row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 g-3 mb-4">
             
             @foreach (var project in Model.Projects.Items)
             {

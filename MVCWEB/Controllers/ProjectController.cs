@@ -4,7 +4,7 @@ namespace MVCWEB.Controllers
 {
     public class ProjectController : Controller
     {
-        public IActionResult Index()
+        public IActionResult Main()
         {
             return View();
         }
