@@ -12,17 +12,20 @@ namespace MVCWEB.Controllers
     [Authorize]
     public class CollabController : Controller
     {
+        private readonly ICollabRepository _collab;
         private readonly IProjectRepository _project;
         private readonly ILogger<CollabController> _logger;
 
         public CollabController(
-              IProjectRepository project,
-              ILogger<CollabController> logger
+              ICollabRepository collab,
+              ILogger<CollabController> logger,
+              IProjectRepository project
 
             )
         {
-            _project = project;
+            _collab = collab;
             _logger = logger;
+            _project = project;
         }
         public IActionResult Index(
             
@@ -38,7 +41,7 @@ namespace MVCWEB.Controllers
             
             var projects = new CollabViewModel()
             {
-                Projects = await _project.BrowseAllProjects(page, pageSize, search),
+                Projects = await _collab.BrowseAllProjects(page, pageSize, search),
                 Search = search
             };
             return View(projects);
@@ -50,7 +53,7 @@ namespace MVCWEB.Controllers
             int pageSize = 9;
             var projects = new CollabViewModel()
             {
-                Projects = await _project.GetJoinedProjects(userId, page, pageSize, search)
+                Projects = await _collab.GetJoinedProjects(userId, page, pageSize, search)
             };
 
             return View(projects);
@@ -63,7 +66,7 @@ namespace MVCWEB.Controllers
             int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
             var MyProjects = new CollabViewModel()
             {
-                Projects = await _project.
+                Projects = await _collab.
                 GetOwnedProjects(
                     userId,
                     page,
@@ -75,72 +78,36 @@ namespace MVCWEB.Controllers
             return View(MyProjects);
         }
         [HttpGet]
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> Details(int ProjectId)
         {
-            var project = new CollabViewModel() { Project = await _project.GetByIdAsync(id) };
+         
+                var UserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
-            if(project is null || !Request.Headers.ContainsKey("X-Requested-With"))
-            {
-                return NotFound();
-            }
-
-            project.Members = await _project.GetProjectTeamMembers(id);
-            
-
-            return PartialView("Partials/Project/_ProjectModalViewPartial",project);
-        }
-        [HttpGet]
-        public async Task<IActionResult> Create()
-        {
-            var CreateProject = new CollabCreateViewModel()
-            {
-                Skills = await _project.GetAllAvailableSkills(),
-                Categories = await _project.GetAllAvailableCategories()
-            };
-            return View(CreateProject);
-        }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CollabCreateViewModel ccvm)
-        {
-            ccvm.Skills = await _project.GetAllAvailableSkills();
-            ccvm.Categories = await _project.GetAllAvailableCategories();
-
-            if (!ModelState.IsValid)
-            {
-                return View(ccvm);
-            }
-
-            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-
-            var NewProject = new Project()
-            {
-                Title = ccvm.Title,
-                Description = ccvm.Description,
-                MemberSize = ccvm.MemberSize,
-
-                Categories = ccvm.SelectedCategoryIds!.
-                Select(id => new ProjectCategories { 
-                    Category_id = int.Parse(id),
-                
-                }).ToList()
-                ,
-                Skills = ccvm.SelectedSkillIds!.
-                Select(id => new ProjectSkills
+                var project = new CollabViewModel()
                 {
-                    Skill_id = id
 
-                }).ToList(),
-            };
+                    Project = await _collab.GetByIdAsync(ProjectId),
+                    isProjectMember = await _project.IsUserProjectMember(UserId, ProjectId),
+                    isOwnerMember = await _project.IsUserProjectOwner(UserId, ProjectId),
+                    isRequested = await _project.IsUserInRequest(UserId, ProjectId)
 
-            await _project.CreateProject(userId, NewProject);
+                };
 
-            return RedirectToAction("Index","Dashboard");
+                if (project is null || !Request.Headers.ContainsKey("X-Requested-With"))
+                {
+                    return NotFound();
+                }
+
+                project.Members = await _collab.GetProjectTeamMembers(ProjectId);
+
+
+                return PartialView("Partials/Project/_ProjectModalViewPartial", project);
+           
+
+            
         }
-        public IActionResult JoinRequests()
-        {   
-            return View();
-        }
+       
+       
 
     }
 }

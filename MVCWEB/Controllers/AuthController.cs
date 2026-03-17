@@ -62,7 +62,7 @@ namespace MVCWEB.Controllers
             var claims = new List<Claim>()
             {
                 new Claim(ClaimTypes.NameIdentifier, user.User_id.ToString()),
-                new Claim(ClaimTypes.Name, string.Concat(user.LastName,user.FirstName)),
+                new Claim(ClaimTypes.Name, string.Concat(user.FirstName," ",user.LastName)),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Role, user.AuthorizationRole)
             };

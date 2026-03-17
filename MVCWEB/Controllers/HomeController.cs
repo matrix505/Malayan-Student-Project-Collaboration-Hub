@@ -11,12 +11,12 @@ namespace MVCWEB.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly IProjectRepository _projectRepository;
+        private readonly ICollabRepository _projectRepository;
  
 
         public HomeController(
             ILogger<HomeController> logger,
-            IProjectRepository projectRepository
+            ICollabRepository projectRepository
             )
         {
             _logger = logger;

@@ -9,9 +9,10 @@ namespace MVCWEB.Extensions.Services
         {
             services.AddScoped<IUsersRepository, UserRepository>(); // for user client dal
             services.AddScoped<IAccountRepository, AccountRepository>(); // for authentication dal
-            services.AddScoped<IProjectRepository, ProjectRepository>();
+            services.AddScoped<ICollabRepository, CollabRepository>();
             services.AddScoped<IDiscussionRepository, DiscussionRepository>();
             services.AddScoped<INotificationRepository, NotificationRepository>();
+            services.AddScoped<IProjectRepository, ProjectRepository>();
             //
 
             return services;

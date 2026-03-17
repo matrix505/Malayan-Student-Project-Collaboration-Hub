@@ -32,7 +32,6 @@
 
   <ItemGroup>
     <Folder Include="Hub\" />
-    <Folder Include="Models\NewFolder\" />
     <Folder Include="Templates\" />
     <Folder Include="wwwroot\css\Modals\" />
   </ItemGroup>
