@@ -1,7 +1,6 @@
 ﻿using Dapper;
 using MVCWEB.DAL.Abstract;
 using MVCWEB.Data;
-using MVCWEB.Models;
 using MVCWEB.Models.Entities;
 
 namespace MVCWEB.DAL
@@ -10,54 +9,15 @@ namespace MVCWEB.DAL
     {
         private readonly DapperContext _dapperContext;
         private readonly ILogger<ProjectRepository> _logger;
+
         public ProjectRepository(
-            DapperContext dapper,
+            DapperContext dapperContext,
             ILogger<ProjectRepository> logger
-            ) {
-            _dapperContext = dapper;
+            )
+        {
+            _dapperContext = dapperContext;
             _logger = logger;
         }
-        public async Task<PaginatedResult<Project>> BrowseAllProjects(int page, int pageSize, string? search)
-        {
-            using var conn = _dapperContext.CreateConnection();
-            var OFFSET = (page - 1) * pageSize;
-
-            var query = @"
-                SELECT p.Project_id, p.Title, p.Description, p.Status, p.CreatedAt, p.MemberSize,
-                COUNT(DISTINCT tm.User_id) AS TotalMembers,
-                STRING_AGG(c.Category_name, ', ') AS CategoryNames
-                FROM Project p
-
-                LEFT JOIN ProjectCategories pc ON pc.Project_id = p.Project_id
-
-                LEFT JOIN Categories c ON c.Category_id = pc.Category_id
-                LEFT JOIN TeamMembers tm ON tm.Project_id = p.Project_id
-                WHERE (@Search IS NULL
-                OR p.Title LIKE '%' + @Search + '%'
-                OR p.Description LIKE '%' + @Search + '%')
-                GROUP BY p.Project_id, p.Title, p.Description, p.Status, p.CreatedAt, p.MemberSize
-                ORDER BY p.CreatedAt DESC
-                OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
-
-                SELECT COUNT(*) FROM Project
-                WHERE (@Search IS NULL
-                OR Title LIKE '%' + @Search + '%'
-                OR Description LIKE '%' + @Search + '%');";
-
-            using var multi = await conn.QueryMultipleAsync(query, new
-            { Offset = OFFSET, PageSize = pageSize, Search = search  }
-            );
-            var items = (await multi.ReadAsync<Project>()).ToList();
-            var total = await multi.ReadFirstAsync<int>();
-
-            return new PaginatedResult<Project>() { 
-                Items = items,
-                TotalCount = total,
-                Page = page,
-                PageSize = pageSize,
-            };
-        }
-
         public async Task CreateProject(int userId, Project project)
         {
             using var conn = _dapperContext.CreateConnection();
@@ -71,11 +31,13 @@ namespace MVCWEB.DAL
                     INSERT INTO Project (Owner_id,Title,Description,MemberSize) VALUES 
                     (@UserId, @Title, @Desc, @Size); SELECT SCOPE_IDENTITY();";
                 int projectId = await conn.ExecuteScalarAsync<int>(projectQuery,
-                    new {
+                    new
+                    {
                         UserId = userId,
                         project.Title,
                         Desc = project.Description,
-                        Size = project.MemberSize }, transaction);
+                        Size = project.MemberSize
+                    }, transaction);
 
                 // categories of project
                 string projectCategories = @"INSERT INTO ProjectCategories 
@@ -101,203 +63,142 @@ namespace MVCWEB.DAL
                         Project_id = projectId,
                         e.Skill_id
                     }).ToList()
-                    ,transaction);
+                    , transaction);
 
                 string Role = "Testing"; // Todo : Make a role manager for owner of project
                 // insert also the owwnerr
                 string teamProject = @"INSERT INTO TeamMembers (Project_id, User_id, Role) VALUES (@ProjectId, @UserId, @Role)";
-                await conn.ExecuteAsync(teamProject, 
-                    new { UserId = userId, ProjectId = projectId, Role = Role}
-                    
+                await conn.ExecuteAsync(teamProject,
+                    new { UserId = userId, ProjectId = projectId, Role = Role }
+
                     , transaction);
 
                 transaction.Commit();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                _logger.LogError(ex,ex.Message);
+                _logger.LogError(ex, ex.Message);
                 transaction.Rollback();
             }
-           
+
         }
 
-        public Task DisposeProject(int ownerId, int projectId)
+        public Task DisposeProject(int OwnerId)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<PaginatedResult<Project>> GetJoinedProjects(
-            int userId, 
-            int page, 
-            int pageSize, 
-            string search)
+        public async Task<Project?> GetMainProject(int ProjectId)
         {
             using var conn = _dapperContext.CreateConnection();
-            var OFFSET = (page - 1) * pageSize;
 
             var query = @"
-                SELECT p.Project_id, p.Title, p.Description, p.Status, p.CreatedAt,
-                STRING_AGG(c.Category_name, ', ') AS CategoryNames,
-                CONCAT(u.FirstName,' ', u.LastName) as OwnerName
-                FROM Project p
-                
-                INNER JOIN TeamMembers tm ON tm.Project_id = p.Project_id
-                LEFT JOIN ProjectCategories pc ON pc.Project_id = p.Project_id
-                LEFT JOIN Categories c ON c.Category_id = pc.Category_id
-                LEFT JOIN Users u ON u.User_id = p.Owner_id
+        SELECT 
+            p.Project_id, 
+            p.Title, 
+            p.Description, 
+            p.Status, 
+            p.CreatedAt, 
+            p.MemberSize,
+            COUNT(DISTINCT tm.User_id) AS TotalMembers,
+            STRING_AGG(c.Category_name, ', ') AS CategoryNames
+            FROM Project p
+            LEFT JOIN ProjectCategories pc ON pc.Project_id = p.Project_id
+            LEFT JOIN Categories c ON c.Category_id = pc.Category_id
+            LEFT JOIN TeamMembers tm ON tm.Project_id = p.Project_id
+            WHERE p.Project_id = @ProjectId
+            GROUP BY 
+            p.Project_id, 
+            p.Title, 
+            p.Description, 
+            p.Status, 
+            p.CreatedAt, 
+            p.MemberSize;";
 
-                WHERE 
-                tm.User_id = @UserId AND
-                p.Owner_id != @UserId AND
-                (@Search IS NULL
-                OR p.Title LIKE '%' + @Search + '%'
-                OR p.Description LIKE '%' + @Search + '%')
-                GROUP BY p.Project_id, p.Title, p.Description, p.Status, p.CreatedAt, u.FirstName, u.LastName
-                ORDER BY p.CreatedAt DESC
-                OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
-
-                SELECT COUNT(DISTINCT p.Project_id) 
-                FROM Project p
-                INNER JOIN TeamMembers tm ON tm.Project_id = p.Project_id
-                
-                WHERE tm.User_id = @UserId AND
-                (@Search IS NULL
-                OR Title LIKE '%' + @Search + '%'
-                OR Description LIKE '%' + @Search + '%');";
-
-            using var multi = await conn.QueryMultipleAsync(query, new
-            { 
-                //query paramterss
-                Offset = OFFSET, 
-                PageSize = pageSize, 
-                Search = search,
-                UserId = userId
-            
-            }
-            );
-            var items = (await multi.ReadAsync<Project>()).ToList();
-            var total = await multi.ReadFirstAsync<int>();
-
-            return new PaginatedResult<Project>()
+            return await conn.QueryFirstOrDefaultAsync<Project>(query, new
             {
-                Items = items,
-                TotalCount = total,
-                Page = page,
-                PageSize = pageSize,
-            };  
+                ProjectId = ProjectId
+            });
         }
 
-        public async Task<PaginatedResult<Project>> GetOwnedProjects(int userId, int page, int pageSize, string? search)
+        public Task<bool> IsProjectFull(int ProjectId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<bool> IsUserInRequest(int UserId, int ProjectId)
         {
             using var conn = _dapperContext.CreateConnection();
-            var OFFSET = (page - 1) * pageSize;
-
             var query = @"
-                SELECT p.Project_id, p.Title, p.Description, p.Status, p.CreatedAt,
-                STRING_AGG(c.Category_name, ', ') AS CategoryNames,
-                CONCAT(u.FirstName,' ', u.LastName) as OwnerName
-                FROM Project p
-                
-                INNER JOIN TeamMembers tm ON tm.Project_id = p.Project_id
-                LEFT JOIN ProjectCategories pc ON pc.Project_id = p.Project_id
-                LEFT JOIN Categories c ON c.Category_id = pc.Category_id
-                LEFT JOIN Users u ON u.User_id = p.Owner_id
-
-                WHERE
-                p.Owner_id = @UserId AND
-                (@Search IS NULL
-                OR p.Title LIKE '%' + @Search + '%'
-                OR p.Description LIKE '%' + @Search + '%')
-                GROUP BY p.Project_id, p.Title, p.Description, p.Status, p.CreatedAt, u.FirstName, u.LastName
-                ORDER BY p.CreatedAt DESC
-                OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
-
-                SELECT COUNT(DISTINCT p.Project_id) 
-                FROM Project p
-                INNER JOIN TeamMembers tm ON tm.Project_id = p.Project_id
-                
-                WHERE tm.User_id = @UserId AND
-                (@Search IS NULL
-                OR Title LIKE '%' + @Search + '%'
-                OR Description LIKE '%' + @Search + '%');";
-
-            using var multi = await conn.QueryMultipleAsync(query, new
-            {
-                //query paramterss
-                Offset = OFFSET,
-                PageSize = pageSize,
-                Search = search,
-                UserId = userId
-
-            }
-            );
-            var items = (await multi.ReadAsync<Project>()).ToList();
-            var total = await multi.ReadFirstAsync<int>();
-
-            return new PaginatedResult<Project>()
-            {
-                Items = items,
-                TotalCount = total,
-                Page = page,
-                PageSize = pageSize,
-            };
+                     SELECT COUNT(1)
+                     FROM JoinRequests
+                     WHERE User_id = @UserId
+                     AND Project_id = @ProjectId
+                     AND Status = 'Pending'";
+            var count = await conn.ExecuteScalarAsync<int>(query, new { UserId, ProjectId });
+            return count > 0;
         }
 
-        public async Task<Project?> GetByIdAsync(int projectId)
+        public async Task<bool> IsUserProjectMember(int UserId, int ProjectId)
         {
             using var conn = _dapperContext.CreateConnection();
-            string query = @"
-                SELECT p.Project_id, p.Title, p.Description, p.Status, p.CreatedAt, p.Owner_id,
-                STRING_AGG(c.Category_name, ', ') AS CategoryNames,
-                CONCAT(u.FirstName,' ', u.LastName) as OwnerName, 
-                COUNT(DISTINCT tm.User_id) AS TotalMembers
-                FROM Project p
+            var query = @"
+                SELECT COUNT(1)
+                FROM TeamMembers tm
+                WHERE tm.User_id = @UserId
+                AND tm.Project_id = @ProjectId";
 
-                LEFT JOIN ProjectCategories pc ON pc.Project_id = p.Project_id
-                LEFT JOIN Categories c ON c.Category_id = pc.Category_id
-                LEFT JOIN TeamMembers tm ON tm.Project_id = p.Project_id
-                LEFT JOIN Users u ON u.User_id = p.Owner_id 
+            var count = await conn.ExecuteScalarAsync<int>(query, new { UserId, ProjectId });
+            return count > 0;
+        }
+
+        public async Task<bool> IsUserProjectOwner(int UserId, int ProjectId)
+        {
+            using var conn = _dapperContext.CreateConnection();
+            var query = @"
+                SELECT COUNT(1)
+                FROM Project p
                 WHERE p.Project_id = @ProjectId
-                GROUP BY p.Project_id, p.Title, p.Description, p.Status, p.CreatedAt, p.Owner_id,
-                u.FirstName, u.LastName";
-            
-            return await conn.QueryFirstOrDefaultAsync<Project>(query, new { ProjectId = projectId });
+                AND p.Owner_id = @UserId";
 
+            var count = await conn.ExecuteScalarAsync<int>(query, new { UserId, ProjectId });
+            return count > 0;
         }
 
-        public async Task<List<TeamMembers>> GetProjectTeamMembers(int projectId)
+        public async Task RequestToJoin(JoinRequests request)
         {
             using var conn = _dapperContext.CreateConnection();
-            conn.Open();
 
-            string query = @"
-            SELECT u.User_id AS User_id,
-                   u.Email AS Email,
-                   CONCAT(u.FirstName,' ', u.LastName) AS Fullname
-            FROM TeamMembers AS tm
-            INNER JOIN Users u ON u.User_id = tm.User_id
-            WHERE tm.Project_id = @ProjectId";
+            //var isMember = await IsUserProjectMember(request.User_id, request.Project_id);
+            //if (isMember)
+            //    throw new InvalidOperationException("User is already a member of this project.");
 
-            return (await conn.QueryAsync<TeamMembers>(query,
-                new { ProjectId = projectId })).ToList();
+            //var existingRequestQuery = @"
+            //        SELECT COUNT(1) 
+            //        FROM JoinRequests 
+            //        WHERE Project_id = @Project_id 
+            //        AND User_id = @User_id 
+            //        AND Status = 'Pending'";
 
-        }
+            //var existingRequest = await conn.ExecuteScalarAsync<int>(existingRequestQuery, new
+            //{
+            //    request.Project_id,
+            //    request.User_id
+            //});
 
-        public async Task<List<Categories>> GetAllAvailableCategories()
-        {
-            using var conn = _dapperContext.CreateConnection();
-            string query = @"SELECT * FROM Categories";
+            //if (existingRequest > 0)
+            //    throw new InvalidOperationException("User already has a pending request for this project.");
 
-            return (await conn.QueryAsync<Categories>(query)).ToList();
+            // Insert join request
+            var insertQuery = @"
+                INSERT INTO JoinRequests (Project_id, User_id,Status)
+                VALUES (@Project_id, @User_id,'Pending')";
 
-        }
-
-        public async Task<List<Skills>> GetAllAvailableSkills() 
-        {
-            using var conn = _dapperContext.CreateConnection();
-            string query = @"SELECT * FROM Skills";
-
-            return (await conn.QueryAsync<Skills>(query)).ToList();
+            await conn.ExecuteAsync(insertQuery, new
+            {
+                request.Project_id,
+                request.User_id
+            });
         }
     }
 }

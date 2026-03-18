@@ -1,10 +1,9 @@
 ﻿using MVCWEB.Models.Entities;
-using Org.BouncyCastle.Bcpg.OpenPgp;
 using System.ComponentModel.DataAnnotations;
 
-namespace MVCWEB.ViewModel.Collab
+namespace MVCWEB.ViewModel.ForProject
 {
-    public class CollabCreateViewModel
+    public class ProjectCreateViewModel
     {
         [Required]
         [MinLength(16, ErrorMessage = "Title must be at least 16 characters.")]

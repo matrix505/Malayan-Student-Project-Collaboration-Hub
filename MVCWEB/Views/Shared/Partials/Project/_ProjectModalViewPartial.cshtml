@@ -32,7 +32,7 @@
                 _ => "bg-light text-dark"
             };
         }
-        <span class="badge @badgeClass">@Model.Project.Status</span>
+        <span class="badge ">@Model.Project.Status</span>
     </div>
     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 </div>
@@ -137,18 +137,36 @@
 </div>
 
 <div class="modal-footer border-0 pt-0">
-    @* <button type="button" class="btn btn-outline-secondary btn-sm"
+    <button type="button" class="btn btn-outline-secondary btn-sm"
             data-bs-dismiss="modal">
         Close
-    </button> *@
+    </button>
+    @{
+        if (Model.isProjectMember || Model.isOwnerMember)
+        {
+            <a class="btn btn-primary" asp-action="main" asp-controller="project" asp-route-id="@Model.Project.Project_id" asp-route-tab="overview">
+            Open
+            </a>
+        }
+        else if (Model.isRequested)
+        {
+            //do nothing
+            <a class="btn btn-secondary" href="#" disabled>Requested</a>
+        }
+        else
+        {
 
-
-    <a asp-action="ProjectMain" asp-controller="Collab"
-       asp-route-id="@Model.Project.Project_id"
-       class="btn btn-primary btn">
-        <i class="bi bi-arrow-right me-1"></i>
-        Open
-    </a>
+            <form asp-action="RequestToJoin" asp-controller="project"
+                  asp-route-ProjectId="@Model.Project.Project_id" method="post">
+                @Html.AntiForgeryToken();
+                <button class="btn btn-dark btn">
+                    <i class="bi bi-arrow-right me-1"></i>
+                    Request to join
+                </button>
+            </form>
+        }
+        }
+    
 
 
 </div>
