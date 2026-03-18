@@ -24,5 +24,7 @@ namespace MVCWEB.Controllers
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("login", "auth");
         }
+
+        
     }
 }
