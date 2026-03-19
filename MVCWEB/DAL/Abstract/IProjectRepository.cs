@@ -14,5 +14,8 @@ namespace MVCWEB.DAL.Abstract
         Task<bool> IsProjectFull(int ProjectId);
 
         Task RequestToJoin(JoinRequests request);
+        Task<List<JoinRequests>?> ViewJoinRequests(int ProjectId);
+        Task<bool> AcceptJoinRequest(int RequestId);
+        Task<bool> RejectJoinRequest(int RequestId);
     }
 }

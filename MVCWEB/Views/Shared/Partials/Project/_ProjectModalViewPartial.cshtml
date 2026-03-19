@@ -137,9 +137,9 @@
 </div>
 
 <div class="modal-footer border-0 pt-0">
-    <button type="button" class="btn btn-outline-secondary btn-sm"
+    <button type="button" class="btn btn-outline-secondary"
             data-bs-dismiss="modal">
-        Close
+        Close   
     </button>
     @{
         if (Model.isProjectMember || Model.isOwnerMember)
@@ -151,7 +151,7 @@
         else if (Model.isRequested)
         {
             //do nothing
-            <a class="btn btn-secondary" href="#" disabled>Requested</a>
+            <span class="btn btn-secondary" href="#" disabled>Requested</span>
         }
         else
         {

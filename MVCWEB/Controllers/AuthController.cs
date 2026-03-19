@@ -1,13 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MVCWEB.DAL.Abstract;
 using MVCWEB.Models.Entities;
 using MVCWEB.Services.Abstract;
 using MVCWEB.ViewModel.Account;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace MVCWEB.Controllers
 {
@@ -33,12 +31,16 @@ namespace MVCWEB.Controllers
             _passwordhasher = passwordHasher;
             _mail = emailSenderService;
         }
+        public IActionResult AuthTest()
+        {
+            return Content($"IsAuthenticated: {User.Identity.IsAuthenticated} | Name: {User.Identity.Name} | ENV: {Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}");
+        }
         [HttpGet]
         public IActionResult Login()
         {
             if(User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Profile", "Account");
             }
             return View();
         }
@@ -70,11 +72,9 @@ namespace MVCWEB.Controllers
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);
 
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                principal);
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Profile", "Account");
         }
 
         [HttpGet]
@@ -82,7 +82,7 @@ namespace MVCWEB.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Profile", "Account");
             }
             return View(new RegisterViewModel());
         }

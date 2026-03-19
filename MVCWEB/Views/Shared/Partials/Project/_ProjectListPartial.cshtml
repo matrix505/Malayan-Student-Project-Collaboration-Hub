@@ -66,6 +66,7 @@
 
                     @if (!string.IsNullOrEmpty(Model.Search))
                     {
+
                         <a asp-action="@action" class="btn btn-sm btn-outline-danger">
                             Clear
                         </a>
@@ -74,9 +75,7 @@
                 </div>
             </form>
         }
-            @* <div class="d-flex justify-content-end">
-                <a class="btn btn-dark"></a>
-            </div> *@
+          
         </div>
 
     </div>
@@ -222,19 +221,17 @@
             }
         </div>
     }
-
 </div>
-
 <div class="modal fade" id="projectModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content p-1 p-md-4" id="projectModalContent">
-
-
+            
         </div>
     </div>
 </div>
 
 <script type="text/javascript">
+    
     document.querySelectorAll('.project-card').forEach(card => {
         card.addEventListener('click', async () => {
             const id = card.dataset.id;
@@ -243,7 +240,6 @@
                 
                 const requestId = parseInt(id);
 
-                console.log(requestId);
                 const response = await fetch(`/collab/Details?ProjectId=${requestId}`,
                 {
                     headers: { 'X-Requested-With': 'XMLHttpRequest' }
@@ -258,8 +254,8 @@
 
             } catch (error) {
 
-               document.getElementById('projectModalContent').innerHTML = error;
-                new bootstrap.Modal(document.getElementById('projectModal')).show();
+               // document.getElementById('projectModalContent').innerHTML = error;
+               //  new bootstrap.Modal(document.getElementById('projectModal')).show();
             }
         });
     });

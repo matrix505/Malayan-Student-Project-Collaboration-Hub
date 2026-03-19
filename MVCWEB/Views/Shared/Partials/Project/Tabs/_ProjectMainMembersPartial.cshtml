@@ -1,5 +1,25 @@
-﻿@*
-   
-*@
+﻿@using MVCWEB.ViewModel.ForProject
+@model ProjectMainViewModel
 @{
+
 }
+<div class="d-flex flex-column gap-2">
+    @foreach (var member in Model.Members)
+    {
+        <div class="card rounded-3 px-3 py-2 d-flex flex-row align-items-center gap-3">
+            <div class="member-avatar d-flex align-items-center justify-content-center">
+                @member.Fullname.Substring(0, 1).ToUpper()
+            </div>
+            <div class="member-details d-flex flex-column">
+                <span class="fw-medium small">@member.Fullname</span>
+                <span class="fw-medium small text-muted">@member.Email</span>
+            </div>
+            @if (Model.Members.IndexOf(member) == 0)
+            {
+                <span class="badge rounded-pill owner-badge ms-auto">Owner</span>
+            }
+        </div>
+
+
+    }
+</div>

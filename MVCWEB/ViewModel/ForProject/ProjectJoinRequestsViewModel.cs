@@ -4,6 +4,6 @@ namespace MVCWEB.ViewModel.ForProject
 {
     public class ProjectJoinRequestsViewModel
     {
-        public List<JoinRequests> UserJoinRequests { get; set; } = new();
+        public List<JoinRequests>? UserJoinRequests { get; set; } 
     }
 }
