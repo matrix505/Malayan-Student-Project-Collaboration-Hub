@@ -1,23 +1,26 @@
-﻿using MVCWEB.Models;
-using MVCWEB.Models.Entities;
+﻿using MVCWEB.Models.Entities;
 
 namespace MVCWEB.DAL.Abstract
 {
     public interface IProjectRepository
     {
-        Task<PaginatedResult<Project>> BrowseAllProjects(int page, int pageSize, string? search);
-        Task<PaginatedResult<Project>> GetOwnedProjects(int userId,int page, int pageSize, string? search);
-        Task<PaginatedResult<Project>> GetJoinedProjects(int userId,int page, int pageSize, string? search);
-        Task<Project> GetByIdAsync(int projectId);
-        Task<List<TeamMembers>> GetProjectTeamMembers(int projectId);
+        Task CreateProject(int userId, Project project);
+        Task DisposeProject(int projectId);
+        Task<Project?> GetMainProject(int ProjectId);
+        Task<bool> IsUserProjectMember(int UserId, int ProjectId);
+        Task<bool> IsUserProjectOwner(int UserId, int ProjectId);
+        Task<bool> IsUserInRequest(int UserId, int ProjectId);
+
+        Task<bool> IsProjectFull(int ProjectId);
+
+        Task RequestToJoin(JoinRequests request);
+        Task<List<JoinRequests>?> ViewJoinRequests(int ProjectId);
+        Task<bool> AcceptJoinRequest(int RequestId);
+        Task<bool> RejectJoinRequest(int RequestId);
+
+        Task<List<TopicMessages>> GetDiscussionMessages(int ProjectId, int TopicId);
+
+        Task<bool> LeaveProject(int UserId, int ProjectId);
         
-        
-        Task CreateProject(int userId,Project project);
-        Task DisposeProject(int ownerId,int projectId);
-
-
-        Task<List<Categories>> GetAllAvailableCategories();
-        Task<List<Skills>> GetAllAvailableSkills();
-
     }
 }

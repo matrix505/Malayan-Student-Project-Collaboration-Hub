@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MVCWEB.DAL.Abstract;
+using MVCWEB.Data;
 using MVCWEB.Enums;
 using MVCWEB.ViewModel;
 
@@ -11,13 +12,11 @@ namespace MVCWEB.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly IProjectRepository _projectRepository;
- 
+        private readonly ICollabRepository _projectRepository;
 
         public HomeController(
             ILogger<HomeController> logger,
-            IProjectRepository projectRepository
-            )
+            ICollabRepository projectRepository)
         {
             _logger = logger;
             _projectRepository = projectRepository;
@@ -25,10 +24,11 @@ namespace MVCWEB.Controllers
         }
        
         public IActionResult Index()
-        {
-            if(User.Identity!.IsAuthenticated)
+        {   
+            
+            if (User.Identity!.IsAuthenticated)
             {
-                return RedirectToAction("Index","Dashboard");
+                return RedirectToAction("Profile","Account");
             }
             return View();
         }

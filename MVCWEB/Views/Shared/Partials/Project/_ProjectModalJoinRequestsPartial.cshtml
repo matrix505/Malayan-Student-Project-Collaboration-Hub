@@ -1,0 +1,53 @@
+﻿@using MVCWEB.ViewModel.ForProject
+@model ProjectJoinRequestsViewModel
+@using Microsoft.AspNetCore.Antiforgery
+@inject IAntiforgery Antiforgery
+
+@* <input type="hidden"
+       id="requestVerificationToken"
+       name="__RequestVerificationToken"
+       value="@Antiforgery.GetAndStoreTokens(ViewContext.HttpContext).RequestToken" /> *@
+
+<div class="modal-header">
+    <h5 class="modal-title">User Requests</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+
+<div class="modal-body p-0">
+    <ul class="list-group list-group-flush" id="userList">
+        @if (Model.UserJoinRequests != null && Model.UserJoinRequests.Any())
+        {
+            @foreach (var user in Model.UserJoinRequests)
+            {
+                <li class="list-group-item d-flex justify-content-between align-items-center px-3 py-2"
+                    data-request-id="@user.Request_id">
+                    <div>
+                        <div class="fw-semibold">@user.Fullname</div>
+                        <div class="text-muted small">testing</div>
+                    </div>
+                    <div class="d-flex gap-2 response-btn">
+                        <button class="btn btn-sm btn-outline-danger btn-response-request"
+                                data-action="reject">
+                            Reject
+                        </button>
+                        <button class="btn btn-sm btn-success btn-response-request" 
+                                data-action="accept">
+                            Accept
+                        </button>
+                    </div>
+                </li>
+            }
+        }
+        else
+        {
+            <li class="list-group-item text-center text-muted py-3">
+                No pending requests.
+            </li>
+        }
+    </ul>
+</div>
+
+<div class="modal-footer text-muted small">
+    @(Model.UserJoinRequests?.Count() ?? 0) pending requests
+</div>
+

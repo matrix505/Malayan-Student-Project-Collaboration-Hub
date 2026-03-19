@@ -1,36 +1,58 @@
 ﻿:root {
 
+    --sidebar-max-width : 240px;
+    --sidebar-min-width : 60px
+     --primary-action: #3590F3;
+    --structure: #0A2463;
+    --white-text: #FFFBFE;
+    --dark-text: #131112;
+    --neutral: #D0CFCF;
+    --background: #FFFFFF;
+
+    --topnav-height: 60px;
 }
 
 body {
 }
 
 #main {
-    margin-left: 240px;
+    padding-top: var(--topnav-height);
+    margin-left: var(--sidebar-max-width);
     flex: 1;
     min-height: 100vh;
     transition: margin-left 0.3s ease;
 }
 
 #main.expanded {
-    margin-left: 60px;
+    margin-left: var(--sidebar-min-width);
+}
+
+.nav-top {
+    width:100%;
+    background-color: var(--structure);
+    max-height:var(--topnav-height);
+    position:fixed;
+    z-index:200;
+}
+.nav-top .navbar-nav a{
+    text-decoration:none;
 }
 
 @media (max-width: 768px) {
 
-    /* hide sidebar off screen by default */
+   
     .sidebar {
-        width: 240px;
-        transform: translateX(-100%);
+        width: 230px;
+/*        transform: translateX(-100%);*/
     }
 
-        /* slide in when open */
+         slide in when open 
         .sidebar.mobile-open {
             transform: translateX(0);
         }
 
-    /* main takes full width on mobile */
+   
     #main {
-        margin-left: 0 !important;
+        margin-left: 60px !important;
     }
 }

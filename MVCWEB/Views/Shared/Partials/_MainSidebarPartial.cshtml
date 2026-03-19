@@ -1,6 +1,4 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using System.Security.Claims
 @{
 }
 <script type="text/javascript">
@@ -18,12 +16,18 @@
         <div class="user-information-container">
 
             <div class="profile-img">
-                <img src="~/Assets/Images/collab-content3.png" />
+                <img src="~/Assets/Images/user-icon.png" />
             </div>
 
-            <div class="profile-information">
-                <span id="user-name" class="user-information">Sebastian, Hermano</span>
-                <span id="user-email" class="user-information">sebastianhedsadsadasdaasrmano@gmail.com</span>
+            <div class="profile-information d-flex flex-column justify-content-center align-items-start">
+                <span id="user-name" class="user-information">@User.FindFirstValue(ClaimTypes.Name)</span>
+                <span id="user-email" class="user-information">@User.FindFirstValue(ClaimTypes.Email)</span>
+                <span class="small" >
+                    <form asp-action="Logout" asp-controller="Account" method="post">
+                        @Html.AntiForgeryToken()
+                        <button class="btn logout-btn btn-link text-decoration-none text-danger p-0 border-0" href="#">Logout</button>
+                    </form>
+                </span>
             </div>
         </div>
     </div>
@@ -31,7 +35,7 @@
     <ul class="sidebar-nav flex-grow-1">
 
         <li class="sidenav-item">
-            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
+            <a class="nav-link" asp-area="" asp-controller="account" asp-action="profile">
                 <i class="bx bx-user-circle"></i>
                 <span class="links_name">Profile</span>
             </a>
@@ -60,18 +64,10 @@
         </li>
 
         <li class="sidenav-item">
-            <a class="nav-link" asp-area="" asp-controller="collab" asp-action="create">
+            <a class="nav-link" asp-area="" asp-controller="project" asp-action="create">
                 <i class="bx bx-folder-plus"></i>
                 <span class="links_name">Create Project</span>
             </a>
         </li>
-
-        <li class="sidenav-item">
-            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
-                <i class="bx bx-envelope"></i>
-                <span class="links_name">Join Requests</span>
-            </a>
-        </li>
-
     </ul>
 </div>

@@ -1,0 +1,404 @@
+﻿@using MVCWEB.ViewModel.ForProject
+@model ProjectMainViewModel
+@{
+    Layout = "_MainLayout";
+
+
+    var currentTab = Model.tab;
+
+}
+
+<style>
+
+    :root {
+        --bg-color: #FAFAFA;
+        --bg-header: ##DBDBDB;
+        --neutral: #BDBDBD;
+        --text-primary: #0A2463;
+        --text-dark: #363636;
+
+        --badge-color: #55D983;
+    }
+    body {
+        background-color: var(--bg-color);
+        color: var(--text-dark);
+    }
+
+    .project-header {
+        background-color: var(--bg-header);
+        border-bottom: 1px solid var(--neutral);
+    }
+
+    /* .project-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 10px;
+        background-color: rgba(79, 142, 247, 0.12);
+        border: 1px solid #2a3142;
+        font-size: 1.3rem;
+        flex-shrink: 0;
+    } */
+
+    .badge-category {
+        font-size: .7rem;
+        background-color:var(--bg-color);
+        color: var(--text-primary);
+    }
+
+    .nav-tabs {
+        border-bottom: none;
+    }
+
+        .nav-tabs .nav-link {
+            color: #6b7591;
+            border: none;
+            border-bottom: 2px solid transparent;
+            border-radius: 0;
+            font-size: .97rem;
+            padding: .7rem 1rem;
+        }
+
+            .nav-tabs .nav-link:hover {
+                color: ;
+                border-color: transparent;
+            }
+
+            .nav-tabs .nav-link.active {
+                color: #4f8ef7;
+                background: transparent;
+                border-bottom-color: #4f8ef7;
+            }
+
+    .tab-count {
+        font-size: .68rem;
+        background-color: var(--neutral);
+        border: 1px solid #2a3142;
+    }
+
+    .tab-content-wrapper {
+        max-width: 860px;
+    }
+
+    .card {
+        background-color: var(--bg-header);
+        border-color: var(--neutral);
+    }
+
+    .card-label {
+        font-size: .68rem;
+        letter-spacing: .08em;
+    }
+
+    .card-about {
+        line-height: 1.65;
+    }
+
+    .stat-row {
+        border-bottom: 1px solid #2a3142;
+        font-size: .85rem;
+    }
+
+        .stat-row:last-child {
+            border-bottom: none;
+        }
+
+    .member-avatar {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background-color: #1e2533;
+        border: 1px solid #2a3142;
+        font-size: .78rem;
+        font-weight: 600;
+        color: #4f8ef7;
+        flex-shrink: 0;
+    }
+
+    .owner-badge {
+        font-size: .66rem;
+        background-color: rgba(79, 142, 247, 0.1);
+        color: #4f8ef7;
+        border: 1px solid rgba(79, 142, 247, 0.2);
+    }
+
+    .empty-icon {
+        opacity: .25;
+    }
+
+    .manage-card {
+        max-width: 460px;
+    }
+
+    .btn-danger-soft {
+        background-color: rgba(224, 92, 92, 0.12);
+        color: #e05c5c;
+        border: 1px solid rgba(224, 92, 92, 0.3);
+        font-size: .85rem;
+    }
+
+        .btn-danger-soft:hover {
+            background-color: rgba(224, 92, 92, 0.22);
+            border-color: #e05c5c;
+            color: #e05c5c;
+        }
+</style>
+
+@section PageStyles {
+    
+}
+
+<div class="project-header px-4 pt-4">
+    <div class="d-flex align-items-start gap-3 mb-4">
+        
+        <div>
+            <h1 class="fs-5 fw-semibold mb-1">@Model.Title</h1>
+            <p class="text-secondary small mb-0">@Model.Description</p>
+            <div class="d-flex flex-wrap gap-1 mt-2">
+                @foreach (var cat in Model.Categories)
+                {
+                    <span class="badge rounded-pill text-secondary badge-category">@cat</span>
+                }
+            </div>
+        </div>
+    </div>
+
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link @(currentTab == "overview" ? "active" : "")" href="@Url.Action("main",new { id= Model.Id, tab = "overview" })">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-1"><rect x="3" y="3" width="10" height="10" /><rect x="14" y="3" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /></svg>
+                Overview
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link @(currentTab == "discussions" ? "active" : "")" href="@Url.Action("main",new { id= Model.Id, tab = "discussions" })">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-1"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
+                Discussions
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link @(currentTab == "members" ? "active" : "")" href="@Url.Action("main",new { id= Model.Id, tab = "members" })">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-1"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
+                Members
+                <span class="badge rounded-pill text-secondary tab-count ms-1">@Model.TotalMembers</span>
+            </a>
+        </li>
+        @if (Model.IsUserProjectOwner || Model.IsUserProjectMember)
+        {
+            <li class="nav-item">
+                <a class="nav-link @(currentTab == "manage" ? "active" : "")" href="@Url.Action("main",new { id= Model.Id, tab = "manage" })">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-1"><circle cx="12" cy="12" r="3" /><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14" /></svg>
+                    Manage
+                </a>
+            </li>
+        }
+    </ul>
+
+</div>
+
+<div class="p-4 tab-content-wrapper w-100">
+
+    @if (currentTab == "overview")
+    {
+        <partial name="Partials/Project/Tabs/_ProjectMainOverviewPartial" model="Model" />
+    }
+
+   else if (currentTab == "discussions")
+{
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h6 class="fw-semibold mb-0 text-secondary text-uppercase" style="font-size:0.75rem; letter-spacing:0.08em;">
+            @Model.DiscussionTopics.Count() Discussion@(Model.DiscussionTopics.Count() != 1 ? "s" : "")
+        </h6>
+        <a class="btn btn-primary btn-sm px-3" href="@Url.Action("creatediscussion", new { projectId = Model.Id , projectTitle = Model.Title.ToString() })">
+            + New Discussion
+        </a>
+    </div>
+
+    @if (!Model.DiscussionTopics.Any())
+    {
+        <div class="text-center py-5 text-secondary border rounded-3 bg-light">
+            <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                 class="d-block mx-auto mb-3">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
+            <p class="small mb-0 fw-medium">No discussions yet.</p>
+            <p class="small text-muted mt-1 mb-0">Be the first to start a conversation.</p>
+        </div>
+    }
+    else
+    {
+        <div class="list-group list-group-flush border rounded-3 overflow-hidden">
+            @foreach (var topic in Model.DiscussionTopics)
+            {
+                <a href="@Url.Action("Discussions", new { ProjectId = Model.Id ,TopicId = topic.Topic_id })"
+                   class="list-group-item list-group-item-action px-4 py-3">
+                    <div class="d-flex justify-content-between align-items-start gap-3">
+
+                     
+                        <div class="flex-shrink-0">
+                            <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center fw-bold"
+                                 style="width:38px; height:38px; font-size:0.85rem;">
+                                @topic.CreatorName?.Substring(0, 1).ToUpper()
+                            </div>
+                        </div>
+
+                     
+                        <div class="flex-grow-1 overflow-hidden">
+                            <div class="d-flex align-items-center gap-2 mb-1">
+                                <span class="fw-semibold text-dark text-truncate">@topic.Title</span>
+                            </div>
+                            @if (!string.IsNullOrWhiteSpace(topic.Description))
+                            {
+                                <p class="text-muted small mb-1 text-truncate">@topic.Description</p>
+                            }
+                            <div class="text-muted d-flex align-items-center gap-1" style="font-size:0.75rem;">
+                                <span>@topic.CreatorName</span>
+                                <span>&middot;</span>
+                                <span>@topic.CreatedAt?.ToString("MMM dd, yyyy")</span>
+                            </div>
+                        </div>
+
+                      
+                        <div class="flex-shrink-0 text-muted align-self-center">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
+                                 viewBox="0 0 24 24">
+                                <path d="M9 18l6-6-6-6" />
+                            </svg>
+                        </div>
+
+                    </div>
+                </a>
+            }
+        </div>
+        }
+    }
+
+    else if (currentTab == "members")
+    {
+
+        if (Model.IsUserProjectOwner)
+        {
+            <button class="btn btn-primary btn-sm mb-2" id="btnViewRequests" data-project-id="@Model.Id">Requests</button>
+        }
+
+        //Partial for members list heree
+        <partial name="Partials/Project/Tabs/_ProjectMainMembersPartial" model="Model" />
+
+        <div class="modal fade" id="requestsModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content" id="requestsModalContent">
+           
+
+        </div>
+    </div>
+</div>
+        
+    }
+
+    else if (currentTab == "manage" && (Model.IsUserProjectOwner || Model.IsUserProjectMember))
+    {
+
+        <div class="card rounded-3 p-3 manage-card">
+            @if (Model.IsUserProjectMember && !Model.IsUserProjectOwner)
+            {
+
+                <h3 class="fs-6 fw-semibold mb-1">Leave Project</h3>
+                <p class="text-secondary small mb-3">You will lose access to all project content. You can rejoin only if re-invited.</p>
+                
+                <form asp-action="LeaveProject" asp-route-projectId="@Model.Id">
+                    @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-danger-soft rounded-2 d-inline-flex align-items-center gap-2"
+                   onclick="return confirm('Are you sure you want to leave this project?'))">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" /></svg>
+                    Leave Project
+                </button>
+                </form>
+            }
+            @if (Model.IsUserProjectOwner)
+            {
+                <h3 class="fs-6 fw-semibold mb-1">Dispose Project</h3>
+                <p class="text-secondary small mb-3">Permanently delete this project and all its data. This action cannot be undone.</p>
+                 <form asp-action="DisposeProject" asp-route-projectId="@Model.Id">
+                     @Html.AntiForgeryToken()
+                <button class="btn btn-danger-soft rounded-2 d-inline-flex align-items-center gap-2"
+                   onclick="return confirm('This will permanently delete the project. Are you sure?')">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="no    ne" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6" /><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" /><path d="M10 11v6" /><path d="M14 11v6" /><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" /></svg>
+                    Dispose Project
+                </button>
+                </form>
+                }
+            </div>
+            }
+
+    @section Scripts {
+        <script>
+          
+            document.getElementById('btnViewRequests')?.addEventListener('click', async () => {
+                const projectId = document.getElementById('btnViewRequests').dataset.projectId;
+
+                try {
+                    const response = await fetch(`/Project/Requests?ProjectId=${parseInt(projectId)}`, {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    });
+
+                    if (!response.ok) throw new Error('Failed to load');
+
+                    const html = await response.text();
+                    document.getElementById('requestsModalContent').innerHTML = html;
+
+                  
+                    attachRequestListeners();
+
+                    new bootstrap.Modal(document.getElementById('requestsModal')).show();
+
+                } catch (error) {
+                    document.getElementById('requestsModalContent').innerHTML = `<div class="p-3 text-danger">${error}</div>`;
+                    new bootstrap.Modal(document.getElementById('requestsModal')).show();
+                }
+            });
+
+            function attachRequestListeners() {
+                document.querySelectorAll('.btn-response-request').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const li = btn.closest('li');
+                        const requestId = parseInt(li.dataset.requestId);
+                        const action = btn.dataset.action;
+
+                        if (!requestId || isNaN(requestId)) return;
+                        if (action !== 'accept' && action !== 'reject') return;
+
+                        li.querySelectorAll('.btn-response-request').forEach(b => b.disabled = true);
+
+                        try {
+                            const response = await fetch('/project/ResponseJoinRequest', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded',
+                                    'X-Requested-With': 'XMLHttpRequest'
+                                },
+                                body: `requestId=${requestId}&action=${action}`
+                            });
+
+                            if (!response.ok) throw new Error(`Server error: ${response.status}`);
+
+                            const result = await response.json();
+
+                            if (result.success) {
+                                const badge = action === 'accept'
+                                    ? '<span class="badge bg-success">Accepted</span>'
+                                    : '<span class="badge bg-danger">Rejected</span>';
+
+                                li.querySelector('.response-btn').innerHTML = badge;
+                                li.classList.add('opacity-50');
+                            } else {
+                                li.querySelectorAll('.btn-response-request').forEach(b => b.disabled = false);
+                            }
+
+                        } catch (error) {
+                            li.querySelectorAll('.btn-response-request').forEach(b => b.disabled = false);
+                            console.error('Request failed:', error);
+                        }
+                    });
+                });
+            }
+        </script>
+    }

@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.DataProtection;
 using MVCWEB.Config;
 using MVCWEB.DAL;
 using MVCWEB.DAL.Abstract;
@@ -15,10 +16,13 @@ namespace MVCWEB.Extensions.Services
     public static class ServiceExtensions
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services,IConfiguration configuration) {
+
+          
             
+
             // Project services
             services.AddSingleton<DapperContext>(); // sql dapper micro-orm
-            services.AddSignalR(); // for real-time data
+            //services.AddSignalR(); // for real-time data
             services.AddScoped<IPasswordHasher, PasswordHasher>(); // for auth service hasher
         
             services.AddScoped<IEmailSenderService, EmailSenderService>(); // Mail Sender'
@@ -43,7 +47,10 @@ namespace MVCWEB.Extensions.Services
                     options.ExpireTimeSpan = TimeSpan.FromDays(1);
                     options.SlidingExpiration = true;
                     options.Cookie.HttpOnly = true;
-                    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                    options.Cookie.SameSite = SameSiteMode.Lax;
+                    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+                    options.Cookie.Name = ".MVCWEB.Auth";
+
                 }
                 );
             services.AddAuthorization();
