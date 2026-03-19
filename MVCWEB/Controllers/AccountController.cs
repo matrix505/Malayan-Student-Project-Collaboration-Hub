@@ -12,8 +12,10 @@ namespace MVCWEB.Controllers
         {
             return View();
         }
+        [HttpGet]
         public IActionResult Profile()
         {
+
             return View();
         }
         [HttpPost]
@@ -23,6 +25,6 @@ namespace MVCWEB.Controllers
             // for logout, TODO : next i will create signinmanager from identity 
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("login", "auth");
-        }
+        }        
     }
 }

@@ -1,6 +1,165 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using System.Security.Claims
 @{
-    Layout = "~/Views/Shared/_MainLayout.cshtml";
+    Layout = "_MainLayout";
 }
+
+<style>
+ 
+</style>
+
+<div class="container py-4">
+
+   
+    <div class="mb-4">
+        <h4 class="fw-bold mb-1">
+            Welcome, @User.FindFirstValue(ClaimTypes.Name)
+        </h4>
+        <p class="text-muted small mb-0">
+            Account Created: 
+        </p>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+            <div class="d-flex align-items-center mb-4">
+                <img src="~/Assets/Images/user-icon.png"
+                     class="rounded-circle me-3"
+                     style="width:80px;height:80px;object-fit:cover;" />
+
+                <div>
+                    <h5 class="mb-0 fw-semibold">
+                        @User.FindFirstValue(ClaimTypes.Name)
+                    </h5>
+                    <small class="text-muted">
+                        @User.FindFirstValue(ClaimTypes.Email)
+                    </small>
+                </div>
+            </div>
+
+         
+            @* <div class="mb-4">
+                <label class="form-label fw-medium">Bio</label>
+                <textarea id="bioInput"
+                          class="form-control"
+                          rows="3"
+                          placeholder="Write something about yourself..."></textarea>
+            </div> *@
+
+       
+            <div class="row g-3 mb-4">
+
+                <div class="col-md-6">
+                    <label class="form-label fw-medium">Full Name</label>
+                    <input class="form-control"
+                           readonly
+                           value="@User.FindFirstValue(ClaimTypes.Name)">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-medium">Username</label>
+                    <input class="form-control" readonly placeholder="Username">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-medium">Birth Date</label>
+                    <input class="form-control"
+                           readonly
+                           value="@User.FindFirstValue(ClaimTypes.DateOfBirth)">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-medium">Country</label>
+                    <input class="form-control"
+                           readonly
+                           value="@User.FindFirstValue(ClaimTypes.Country)">
+                </div>
+
+            </div>
+
+       
+            @* <div class="mb-4">
+                <div class="d-flex flex-column mb-2">
+                    <label class="form-label fw-medium">Skills</label>
+                    <small class="text-muted">Your personal skills</small>
+                </div>
+
+                <div id="skillsContainer"
+                     class="d-flex flex-wrap gap-2 p-3 border rounded bg-light">
+
+                    <span class="badge bg-primary">
+                        UI Design
+                        <button type="button"
+                                class="btn-close btn-close-white ms-2"
+                                onclick="removeSkill(this)"></button>
+                    </span>
+
+                    <span class="badge bg-primary">
+                        HTML
+                        <button type="button"
+                                class="btn-close btn-close-white ms-2"
+                                onclick="removeSkill(this)"></button>
+                    </span>
+
+                    <span class="badge bg-primary">
+                        CSS
+                        <button type="button"
+                                class="btn-close btn-close-white ms-2"
+                                onclick="removeSkill(this)"></button>
+                    </span>
+
+                </div>
+
+                <div class="input-group mt-2">
+                    <input id="skillInput"
+                           class="form-control"
+                           placeholder="Add a skill">
+                    <button class="btn btn-outline-primary"
+                            type="button"
+                            onclick="addSkill()">
+                        Add
+                    </button>
+                </div>
+            </div> *@
+
+          
+            <div>
+                <label class="form-label fw-medium">My Email Address</label>
+
+                <div class="d-flex align-items-center gap-2 p-3 border rounded bg-light">
+                    <span>✉</span>
+                    <span>@User.FindFirstValue(ClaimTypes.Email)</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+@* <script>
+    function addSkill() {
+        const input = document.getElementById('skillInput');
+        const value = input.value.trim();
+        if (!value) return;
+
+        const container = document.getElementById('skillsContainer');
+
+        const badge = document.createElement('span');
+        badge.className = 'badge bg-primary';
+        badge.innerHTML = `
+            ${value}
+            <button type="button"
+                    class="btn-close btn-close-white ms-2"
+                    onclick="removeSkill(this)"></button>
+        `;
+
+        container.appendChild(badge);
+        input.value = '';
+    }
+
+    function removeSkill(btn) {
+        btn.closest('.badge').remove();
+    }
+</script> *@

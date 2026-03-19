@@ -1,5 +1,43 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using MVCWEB.ViewModel.ForProject
+@model ProjectMainViewModel
 @{
 }
+<div class="row g-3">
+    <div class="col-md-8">
+        <div class="card rounded-3 p-3">
+            <p class="card-label text-secondary text-uppercase fw-semibold mb-2">About this project</p>
+            <p class="card-about text-secondary small mb-0">@Model.Description</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card rounded-3 p-3">
+            <p class="card-label text-secondary text-uppercase fw-semibold mb-2">Details</p>
+            <div class="stat-row d-flex justify-content-between py-2">
+                <span class="text-secondary">Created</span>
+                <span class="fw-medium">@Model.CreatedAt?.ToString("MMM dd, yyyy")</span>
+            </div>
+            <div class="stat-row d-flex justify-content-between py-2">
+                <span class="text-secondary">Members</span>
+                <span class="fw-medium">@Model.TotalMembers / @Model.MemberSize</span>
+            </div>
+            <div class="stat-row d-flex justify-content-between py-2">
+                <span class="text-secondary">Your role</span>
+                <span class="fw-medium">
+                    @if (Model.IsUserProjectOwner)
+                    {
+                        <text>Owner</text>
+                    }
+                    else if (Model.IsUserProjectMember)
+                    {
+
+                        <text>Member</text>
+                    }
+                    else
+                    {
+                        <text>Unknown</text>
+                    }
+                </span>
+            </div>
+        </div>
+    </div>
+</div>

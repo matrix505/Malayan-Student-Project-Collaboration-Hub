@@ -13,7 +13,7 @@ namespace MVCWEB.Data
         public DapperContext(IConfiguration configuration)
         {
             _configuration = configuration;
-            _connectionString = _configuration.GetConnectionString("LocalSqlDb");
+            _connectionString = _configuration.GetConnectionString("CloudSqlDb");
         }
 
         public IDbConnection CreateConnection() => new SqlConnection(_connectionString);

@@ -5,6 +5,7 @@
         public int? Request_id { get; set; }
         public int? Project_id { get; set; }
         public int? User_id { get; set; }
+        public string? Fullname { get; set; }
         public string? Status { get; set; }
         public DateTime? RequestedAt { get; set; }
     }

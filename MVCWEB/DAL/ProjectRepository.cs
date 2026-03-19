@@ -18,6 +18,8 @@ namespace MVCWEB.DAL
             _dapperContext = dapperContext;
             _logger = logger;
         }
+
+       
         public async Task CreateProject(int userId, Project project)
         {
             using var conn = _dapperContext.CreateConnection();
@@ -83,9 +85,13 @@ namespace MVCWEB.DAL
 
         }
 
-        public Task DisposeProject(int OwnerId)
+        public async Task DisposeProject(int projectId)
         {
-            throw new NotImplementedException();
+            using var conn = _dapperContext.CreateConnection();
+            var query = @"DELETE FROM Project 
+                        WHERE Project_id = @ProjectId";
+            await conn.ExecuteAsync(query, new { ProjectId = projectId });
+
         }
 
         public async Task<Project?> GetMainProject(int ProjectId)
@@ -165,31 +171,57 @@ namespace MVCWEB.DAL
             return count > 0;
         }
 
+        public async Task<bool> AcceptJoinRequest(int RequestId)
+        {
+            using var conn = _dapperContext.CreateConnection();
+
+           
+            const string getRequest = @"
+                SELECT User_id, Project_id 
+                FROM JoinRequests 
+                WHERE Request_id = @RequestId";
+
+            var request = await conn.QueryFirstOrDefaultAsync(getRequest, new { RequestId });
+
+            if (request == null) return false;
+
+          
+            const string sql = @"
+                UPDATE JoinRequests 
+                SET Status = 'Approved' 
+                WHERE Request_id = @RequestId;
+
+                INSERT INTO TeamMembers (User_id, Project_id,Role)
+                VALUES (@UserId, @ProjectId,'Member');";
+
+            var rows = await conn.ExecuteAsync(sql, new
+            {
+                RequestId,
+                UserId = request.User_id,
+                ProjectId = request.Project_id
+            });
+
+            return rows > 0;
+        }
+
+        public async Task<bool> RejectJoinRequest(int RequestId)
+        {
+            using var conn = _dapperContext.CreateConnection();
+
+            const string sql = @"
+        UPDATE JoinRequests 
+        SET Status = 'Rejected' 
+        WHERE Request_id = @RequestId;";
+
+            var rows = await conn.ExecuteAsync(sql, new { RequestId });
+            return rows > 0;
+        }
+
+
         public async Task RequestToJoin(JoinRequests request)
         {
             using var conn = _dapperContext.CreateConnection();
 
-            //var isMember = await IsUserProjectMember(request.User_id, request.Project_id);
-            //if (isMember)
-            //    throw new InvalidOperationException("User is already a member of this project.");
-
-            //var existingRequestQuery = @"
-            //        SELECT COUNT(1) 
-            //        FROM JoinRequests 
-            //        WHERE Project_id = @Project_id 
-            //        AND User_id = @User_id 
-            //        AND Status = 'Pending'";
-
-            //var existingRequest = await conn.ExecuteScalarAsync<int>(existingRequestQuery, new
-            //{
-            //    request.Project_id,
-            //    request.User_id
-            //});
-
-            //if (existingRequest > 0)
-            //    throw new InvalidOperationException("User already has a pending request for this project.");
-
-            // Insert join request
             var insertQuery = @"
                 INSERT INTO JoinRequests (Project_id, User_id,Status)
                 VALUES (@Project_id, @User_id,'Pending')";
@@ -199,6 +231,63 @@ namespace MVCWEB.DAL
                 request.Project_id,
                 request.User_id
             });
+        }
+
+        public async Task<List<JoinRequests>?> ViewJoinRequests(int ProjectId)
+        {
+            using var conn = _dapperContext.CreateConnection();
+
+            string query = @"
+                SELECT 
+                    jr.Request_id, 
+                    jr.Project_id, 
+                    jr.User_id, 
+                    CONCAT(u.FirstName,' ',u.LastName) as Fullname, 
+                    jr.Status, 
+                    jr.RequestedAt
+                FROM JoinRequests jr
+                INNER JOIN Users u ON u.User_id = jr.User_id
+                WHERE jr.Project_id = @ProjectId
+                AND jr.Status = 'Pending'";
+
+            return (await conn.QueryAsync<JoinRequests>(query, new { ProjectId })).ToList();
+        }
+
+
+        public async Task<List<TopicMessages>> GetDiscussionMessages(int ProjectId, int TopicId)
+        {
+            using var conn = _dapperContext.CreateConnection();
+
+            string query = @"
+                    SELECT 
+                        m.Message_id, 
+                        m.Sender_id, 
+                        m.Topic_id, 
+                        m.Message, 
+                        m.Timestamp,
+                        m.File_attachment,
+                        CONCAT(u.FirstName,' ',u.LastName) as SenderName
+                    FROM TopicMessages m
+                    INNER JOIN Users u ON u.User_id = m.Sender_id
+                    INNER JOIN DiscussionTopics t ON t.Topic_id = m.Topic_id
+                    WHERE m.Topic_id = @TopicId
+                    AND t.Project_id = @ProjectId
+                    ORDER BY m.Timestamp ASC";
+
+            var result = await conn.QueryAsync<TopicMessages>(query, new { TopicId, ProjectId });
+            return result.ToList();
+        }
+
+        public async Task<bool> LeaveProject(int UserId, int ProjectId)
+        {
+            using var conn = _dapperContext.CreateConnection();
+            const string sql = @"
+            DELETE FROM TeamMembers
+            WHERE User_id = @UserId 
+            AND Project_id = @ProjectId";
+
+            var rowsAffected = await conn.ExecuteAsync(sql, new { UserId, ProjectId });
+            return rowsAffected > 0;
         }
     }
 }

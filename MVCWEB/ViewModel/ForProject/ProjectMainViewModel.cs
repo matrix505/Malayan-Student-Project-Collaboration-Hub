@@ -17,5 +17,7 @@ namespace MVCWEB.ViewModel.ForProject
         public bool IsUserProjectOwner { get; set; }
         public bool IsUserProjectMember { get; set; }
         public string? tab { get; set; } 
+
+        public List<Discussions>? DiscussionTopics { get; set; }
     }
 }
